@@ -63,7 +63,6 @@ class Jogador(threading.Thread):
 			return 0
 
 	def freq(self):
-		global susane
 		aux = [0] * 7
 		for i in self.mao:
 			if i.num == 1:
