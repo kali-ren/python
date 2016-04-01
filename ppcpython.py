@@ -20,7 +20,9 @@ buff2=Queue.Queue(2)
 
 lmb=[mb1,mb2]
 listabuffer=[buff1,buff2]
-
+mutexes=[mutex,mutex2]
+fulls=[full,full2]
+emptys=[empty,empty2]
 winner = True
 class Card():
 	def __init__(self,num,naipe):
@@ -100,37 +102,35 @@ class Jogador(threading.Thread):
 			return o
 
 	def getcard(self):
-		
-		mutex.acquire()
+		b = self.bufferget()
+		mutexes[b].acquire()
 		if listabuffer[self.bufferget()].qsize() == 0:
 			print "%s dormiu buffer vazio!" %(self.nome)		
-		mutex.release()
+		mutexes[b].release()
 		
-		full.acquire()
-		mutex.acquire()
-		if listabuffer[self.bufferget()].qsize() == 0:
+		fulls[b].acquire()
+		mutexes[b].acquire()
+		if listabuffer[b].qsize() == 0:
 			print "%s acordou !" % (self.nome)
-		listabuffer[self.bufferget()]
-		a = listabuffer[self.bufferget()].get()
+		a = listabuffer[b].get()
 		self.mao.append(a)
 		print "i, %s, get" % (self.nome)
 		print a
 		print "%s mao: " %(self.nome)
 		for i in range(len(self.mao)):
 			print self.mao[i]
-		listabuffer[self.bufferget()].get()
-		mutex.release()
-		empty.release()
+		mutexes[b].release()
+		emptys[b].release()
 	
 	def drop(self):
 			a = self.buffdrop()
-			mutex.acquire()
+			mutexes[a].acquire()
 			if listabuffer[a].qsize() == 2:
 				print "%s dormiu buffer cheio !" % (self.nome)
-			mutex.release()
+			mutexes[a].release()
 			
-			empty.acquire()
-			mutex.acquire()
+			emptys[a].acquire()
+			mutexes[a].acquire()
 
 			if listabuffer[a].qsize() == 2:
 				print "%s acordou !" % (self.nome)
@@ -143,8 +143,8 @@ class Jogador(threading.Thread):
 			print "%s dropped " % (self.nome)
 			print b
 			listabuffer[a].put(b)
-			mutex.release()
-			full.release()		
+			mutexes[a].release()
+			fulls[a].release()		
 	
 	def run(self):
 		a=0
