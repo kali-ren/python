@@ -1,9 +1,10 @@
 #!/usr/bin/python
 # -*- conding: utf8 -*-
 
-import xlwt
+import xlwt, math
 import random
-
+lista=[0]
+lista2=[0]
 class Simula:
 
 	def __init__(self):
@@ -39,16 +40,49 @@ class Simula:
 		for i, field in enumerate(self.header):
 			self.sheet.write(0, i, field, style=style)
 
+	def vgaa(self):#vga para item a com inversa exponencial
+		u = random.uniform(0,1)
+		r = -12  *(math.log(1-u))#12 = media
+		if r < 1:
+			while r < 1:
+				u = random.uniform(0,1)
+				r = -12  *(math.log(u))	
+		return r
+
+	def normal(self): #vga para item b com metodo de rejeicao
+		dp=1 #desvio
+		x=10 #microsegundos
+		u = random.uniform(0,1)
+		x = -1 * math.log(u)
+		u2 = random.uniform(0,1)
+		e = math.exp(-(x-1)**2)/2#The method exp() returns exponential of x: e^x.
+		if u2 > e:
+			while u2 > e:
+				u = random.uniform(0,1)
+				x = math.log(u)
+				u2 = random.uniform(0,1)
+				e = math.exp((-(x-1)**2)/2)
+
+		u3=random.uniform(0,1)
+		if u3 > 0.5:
+			return abs(u + dp*x)
+		else:
+			return abs(u - dp*x)
 
 	def run(self,packet):
-		field2 = random.randint(0,9)
-		field3 = random.randint(0,9)
-		field4 = random.randint(0,9)
-		field5 = random.randint(0,9)
-		field6 = random.randint(0,9)
-		field7 = random.randint(0,9)
-		field8 = random.randint(0,9)
-		field9 = random.randint(0,9)
+		field2 = self.vgaa()
+		global lista
+		global lista2	
+		lista.append(field2+lista[packet-1])
+		field3 = field2 + lista[packet-1]
+		field4 = self.normal()
+		field5 = self.vgaa() 	
+		field6 = abs(field5-field4)
+		field7 = field4+field5
+		lista2.append(field7)
+		field8 = field4+field6
+		field9 = abs(field5 - lista2[packet-1]) 
+		
 		row = (packet,
 			   field2, 
 			   field3,
@@ -68,9 +102,9 @@ class Simula:
 		
 		style = xlwt.XFStyle()
 		service_t = 0 		# Total Service Time
-		queue_t = 0			# Total Queue Time
+		queue_t = 0		# Total Queue Time
 		system_t = 0		# Total System Time
-		free_t = 0			# Total free time
+		free_t = 0		# Total free time
 
 		for row in self.table:
 			service_t += row[3]
