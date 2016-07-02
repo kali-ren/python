@@ -5,6 +5,7 @@ import xlwt, math
 import random
 lista=[0]
 lista2=[0]
+
 class Simula:
 
 	def __init__(self):
@@ -16,13 +17,11 @@ class Simula:
 		self.rvg2 = None
 		self.table = None
 		
-	def setup(self, header, rvg1, rvg2, sheetName):		
+	def setup(self, header,sheetName):		
 		self.workbook = xlwt.Workbook()
 		self.sheet = self.workbook.add_sheet(sheetName, cell_overwrite_ok=True)
 		self.sheetName = sheetName
 		self.header = header
-		self.rvg1 = rvg1
-		self.rvg2 = rvg2
 		self.table = []
 
 		self._writeHeader()
@@ -46,12 +45,12 @@ class Simula:
 		if r < 1:
 			while r < 1:
 				u = random.uniform(0,1)
-				r = -12  *(math.log(u))	
+				r = -12*(math.log(1-u))	
 		return r
 
 	def normal(self): #vga para item b com metodo de rejeicao
 		dp=1 #desvio
-		x=10 #microsegundos
+		media=10 #media em microsegundos
 		u = random.uniform(0,1)
 		x = -1 * math.log(u)
 		u2 = random.uniform(0,1)
@@ -65,9 +64,9 @@ class Simula:
 
 		u3=random.uniform(0,1)
 		if u3 > 0.5:
-			return abs(u + dp*x)
+			return abs(media + dp*x)
 		else:
-			return abs(u - dp*x)
+			return abs(media - dp*x)
 
 	def run(self,packet):
 		field2 = self.vgaa()
@@ -76,8 +75,8 @@ class Simula:
 		lista.append(field2+lista[packet-1])
 		field3 = field2 + lista[packet-1]
 		field4 = self.normal()
-		field5 = self.vgaa() 	
-		field6 = abs(field5-field4)
+		field5 = random.uniform(field3,field3+1) 	
+		field6 = field5-field3
 		field7 = field4+field5
 		lista2.append(field7)
 		field8 = field4+field6
@@ -118,14 +117,14 @@ class Simula:
 		self.sheet.write(nrows, 7, system_t, style=style)
 		self.sheet.write(nrows, 8, free_t, style=style)
 		
-		self.workbook.save("vdc.xls")
+		self.workbook.save("saida.xls")
 def main():
 	simulator = Simula()
-	fields = ["Num Pacote", "Tempo desde\n ultima chegada", "Tempo chegada\n no relogio",
-				"Tempo de servico", "Tempo inicio\n servico", "Tempo do pacote\n na fila",
+	fields = ["Num Pacote", "Tempo desde\n ultima chegada(ms)", "Tempo chegada\n no relogio",
+				"Tempo de servico(ms)", "Tempo inicio\n servico(ms)", "Tempo do pacote\n na fila(ms)",
 				"Tempo final do\n servico no relogio", "Tempo Total no servico",
-				"Tempo livre do servidor"]
-	simulator.setup(fields,10,2,"proxeneta")
+				"Tempo livre do servidor(ms)"]
+	simulator.setup(fields,"ads")
 	for packet in range(1, 21):
 		simulator.run(packet)
 
