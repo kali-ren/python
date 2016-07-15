@@ -29,8 +29,8 @@ def main():
 		print '[-] access denied.'
 		exit(0)
 	
-	ip = '192.168.1.21'
-	p = 21
+	ip = ''
+	p = 
 	banner = con(ip,p)
 	if banner:
 		print '[+]' + ip + ': ' + banner
