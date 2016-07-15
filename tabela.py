@@ -42,10 +42,6 @@ class Simula:
 	def vgaa(self):#vga para item a com inversa exponencial
 		u = random.uniform(0,1)
 		r = -12  *(math.log(1-u))#12 = media
-		if r < 1:
-			while r < 1:
-				u = random.uniform(0,1)
-				r = -12*(math.log(1-u))	
 		return r
 
 	def normal(self): #vga para item b com metodo de rejeicao
