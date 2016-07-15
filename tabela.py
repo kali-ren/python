@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- conding: utf8 -*-
-
+#trabalho ads
 import xlwt, math
 import random
 lista=[0]
