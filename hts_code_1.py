@@ -20,7 +20,6 @@ def answer(tag):
 ip = 'https://www.hackthissite.org/user/login'
 ip2 = 'https://www.hackthissite.org/missions/prog/1/'
 ip3 = 'https://www.hackthissite.org/missions/prog/1/index.php'
-ipp = 'http://localhost/mopa.html'
 payload = {'username':'','password':''}
 print '[+] running...'
 with requests.Session() as r:
