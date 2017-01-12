@@ -21,7 +21,7 @@ ip = 'https://www.hackthissite.org/user/login'
 ip2 = 'https://www.hackthissite.org/missions/prog/1/'
 ip3 = 'https://www.hackthissite.org/missions/prog/1/index.php'
 ipp = 'http://localhost/mopa.html'
-payload = {'username':'butt-head','password':'554f436a98f6'}
+payload = {'username':'','password':''}
 print '[+] running...'
 with requests.Session() as r:
 	login = r.post(ip,data=payload,headers={'referer':'https://www.hackthissite.org/missions/prog/1/'})
