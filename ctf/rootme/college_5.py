@@ -29,11 +29,9 @@ ms.send('PRIVMSG Candy :!ep1\r\n')
 while 1:
 	data = ms.recv(1024)
 	print data
-	if 'PING :irc.hackerzvoice.net' in data:
-		ms.send('PONG '+data.split()[1]+'\r\n')
-	elif 'PRIVMSG admiral_benson :' in data and '/' in data:
-		a= conta(data)
-		print a
-		ms.send(a) 
-#"""
-#print conta(':Candy!Candy@root-me.org PRIVMSG admiral_benson :208 / 2136')
+
+        if 'PRIVMSG admiral_benson' in data and not 'You dit it!' in data:
+	    ms.send(conta(data)) 
+        elif 'PRIVMSG admiral_benson' in data and 'You dit it!' in data:
+	    break
+ms.close()
