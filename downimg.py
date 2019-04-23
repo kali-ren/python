@@ -24,15 +24,18 @@ def download(ip,imgt):
 		print 'file '+ filename +' downloaded'
 	except:
 		pass
+
 def main():
 	if len(sys.argv) != 2:
 		print 'modo de uso: %s site' % sys.argv[0]
 		exit(0)
+
 	ip = sys.argv[1]
 	imgs = retrieve(ip)
 	dir_name = ip.split('.')[1] 
 	os.makedirs(dir_name)
 	os.chdir(dir_name)
+
 	for i in range(0,len(imgs)):
 		download(ip,imgs[i])
 
