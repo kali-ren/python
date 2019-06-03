@@ -3,7 +3,8 @@ import scrapy
 class Getajob(scrapy.Spider):
 	name = 'I need a Job'
 	start_urls = [
-		'http://queroworkar.com.br/blog/vagas/'
+		'http://queroworkar.com.br/blog/jobs/',
+		#'https://www.indeed.com.br/empregos-de-programador-em-Fortaleza'
 	]
 
 	custom_settings = {
@@ -11,11 +12,16 @@ class Getajob(scrapy.Spider):
 	}
 
 	def parse(self, response):
-		#company = response.xpath("//div/div/span[@class='jobs-author']").extract()
-		title 	= response.xpath("//div/div/div/div/h4/a/text()").extract() 
-		yield{'empresa':title}
-
-		next_selector = '.link-button ::attr(href)'
+		title 	= response.xpath("//div/article/div/div/h2[@class='loop-item-title']/a/text()").extract()
+		company = response.xpath("//div/article/div/div/p/span[@class='job-company']/a/span/text()").extract() 
+		
+		yield{
+		'company': company,
+		'title': title
+		}
+		
+		
+		next_selector = '.next.page-numbers ::attr(href)'
 		next_page 	  = response.css(next_selector).extract_first()
 
 		if next_page:
@@ -23,3 +29,4 @@ class Getajob(scrapy.Spider):
 				response.urljoin(next_page),
 				callback = self.parse
 			) 
+
