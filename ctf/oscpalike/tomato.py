@@ -1,78 +1,41 @@
-import requests, sys, getopt
+import requests
 from bs4 import BeautifulSoup, Comment
+import argparse
 
-def usage():
-	print("TMT extract tool")
+#initial foothold: extraction of comments and links.
 
-	print("insert ascii art\n")
+def get_comments(soup):
+	for comments in soup.find_all(text=lambda text:isinstance(text, Comment)):
+		print(comments.extract())
 
-	print("Usage: tomato.py -c -l <url>")
-	print("-c --comments\t- extract all comments")
-	print("-l --links\t- extract all links")
-	print("-u --url\t- mandatory url target")
-	print()
+def get_local(soup):
+	[print(tag['href']) for tag in soup.find_all(href=True) if tag['href']  != '#']
+
+def get_all(soup):
+	[print(a['href']) for a in soup.find_all('a', href=True) if a['href'] != '#']
 	
-	print("Examples: ")
-	print("tomato.py -c -l 192.168.1.10")
-	print("tomato.py -c 192.168.1.10")
-	print("tomato.py -l 192.168.1.10")
-
-	sys.exit(0)
-
-def get_comments(sopa):
-	print("\n///////////////////////// COMMENTS /////////////////////////\n")
-	for comments in sopa.find_all(text=lambda text:isinstance(text, Comment)):
-		print(comments.extract())		
-
-def get_links(sopa):
-	print("\n///////////////////////// LINKS /////////////////////////\n")
-	for tag in sopa.find_all(href=True):
-		print(tag['href'])
 
 def main():
-	links = False
-	comments = False
-	target = ''
+	parser = argparse.ArgumentParser()
+	parser.add_argument('target',    	   help='pass the target: https://example.com, http://example.com')
+	parser.add_argument('-c', '-comments', help='show comments',  action='store_true')
+	parser.add_argument('-a', '-alinks',   help='show all links', action='store_true')
+	parser.add_argument('-l', '-llinks',   help='show local links only', action='store_true')
+	args = parser.parse_args()
 	
-	try:
-		opts, args = getopt.getopt(sys.argv[1:],"clhu:",["comments","links","help","url"])
-	except getopt.GetoptError as err:
-		print(str(err))
-		usage()
+	r 	   = requests.get(args.target).text
+	soup   = BeautifulSoup(r, 'lxml')
 
-	for o,a in opts:
-		if o in ("-h","--help"):
-			usage()
+	if args.c:
+		print("\n///////////////////////// COMMENTS /////////////////////////\n")		
+		get_comments(soup)
 
-		elif o in ("-l","--links"):
-			links = True
+	if args.a:
+		print("\n///////////////////////// LOCAL LINKS /////////////////////////\n")		
+		get_all(soup)
 
-		elif o in("-c","--comments"):
-			comments = True
-		
-		elif o in("-u","--url"):
-			target  = a
-		
-		else:
-			print("Invalid Option")
-			usage()
-	
-	if target:
-		try:
-			r = requests.get(target).text
-			sopa = BeautifulSoup(r,'lxml')
-			
-			if links:
-				get_links(sopa)
-	
-			if comments:
-				get_comments(sopa)
-			
-		except Exception as e:
-			print("[-]erro: " + str(e))
-			sys.exit(0)
-	else:
-		usage()			
-
+	if args.l:
+		print("\n///////////////////////// LINKS /////////////////////////\n")				
+		get_local(soup)
 
 main()
